@@ -1,0 +1,16 @@
+stages:
+    - testing
+testing:
+    stage: testing
+
+    image: alpine
+    before_script:
+      - apk add openssh-client
+      - eval $(ssh-agent -s)
+      - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+    script:
+      - ssh -o StrictHostKeyChecking=no ubuntu@13.127.156.92 "cd salver/backend/salver-node-bot/ && git pull && docker-compose up -d --build"
+    only:
+      - master
